@@ -46,6 +46,9 @@ app.post("/register", (req, res) => {
 
   // here save the user in to the database
 
+  // set the id of the user to the cookie
+  req.session.userId = 1;
+
   // redirect the user
   res.redirect("secret-content");
 });
@@ -64,7 +67,6 @@ app.post("/login", (req, res) => {
       if it doesnt return to login page and show error incorrect email / password
       if it match redirect user to the secret page
   */
-  console.log(username !== mockUser.username || password !== mockUser.password);
   if (username !== mockUser.username || password !== mockUser.password) return res.send("incorrect email / password");
 
   // set the id of the user to the cookie
@@ -75,7 +77,7 @@ app.post("/login", (req, res) => {
 
 // logout
 app.get("/logout", (req, res) => {
-  req.session.userId = null;
+  req.session.destroy();
   res.redirect("/");
 });
 
@@ -96,14 +98,3 @@ app.get("/secret-content", (req, res) => {
 });
 
 app.listen(PORT, () => console.log("Now Serving - Authentication Boilerplate"));
-
-/*
-  --REGISTRATION--
-  user visit index page
-  user clicks register
-  user get the register page
-  user enter the data and click register
-  server catch the request with post register route
-  server creates a new user in the database
-  server redirect user to secret page
-*/
