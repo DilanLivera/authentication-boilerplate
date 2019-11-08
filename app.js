@@ -31,6 +31,8 @@ app.use(
   })
 );
 
+app.use(express.static(__dirname + "/public"));
+
 // home
 app.get("/", (req, res) => {
   res.render("index");

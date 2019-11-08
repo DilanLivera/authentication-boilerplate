@@ -1,16 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Authentication Boilerplate</title>
-  </head>
-  <body>
-    <form action="/register" method="POST">
-      <input type="text" placeholder="username" name="username" required />
-      <input type="password" placeholder="password" name="password" required />
-      <button type="submit">Register</button>
-    </form>
-  </body>
-</html>
+<!-- add header page -->
+<% include ./partials/header %>
+
+<div class="container p-4 mt-5 rounded bg-light">
+  <form action="/register" method="POST">
+    <div class="form-group">
+      <input class="form-control" type="text" placeholder="username" name="username" required />
+    </div>
+    <div class="form-group">
+      <input class="form-control" type="password" placeholder="password" name="password" required />
+    </div>
+    <button class="btn btn-sm btn-primary" type="submit">Register</button>
+  </form>
+</div>
+<!-- add header page -->
+<% include ./partials/footer %>
