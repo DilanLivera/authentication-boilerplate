@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const sessions = require("client-sessions");
+const csurf = require("csurf");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 /*
   this is a mock user object for user object returned from the database
 */
-const mockUser = {
+const MOCK_USER = {
   _id: 1,
   username: "Dilan",
   password: "12345"
@@ -30,7 +31,7 @@ app.use(
     }
   })
 );
-
+app.use(csurf());
 app.use(express.static(__dirname + "/public"));
 
 // home
@@ -40,16 +41,16 @@ app.get("/", (req, res) => {
 
 // register
 app.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", { csrfToken: req.csrfToken() });
 });
 
 app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
-  // here save the user in to the database
+  // here save the user details in the database
 
   // set the id of the user to the cookie
-  req.session.userId = 1;
+  req.session.userId = MOCK_USER._id;
 
   // redirect the user
   res.redirect("secret-content");
@@ -57,7 +58,7 @@ app.post("/register", (req, res) => {
 
 // login
 app.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", { csrfToken: req.csrfToken() });
 });
 
 app.post("/login", (req, res) => {
@@ -69,17 +70,18 @@ app.post("/login", (req, res) => {
       if it doesnt return to login page and show error incorrect email / password
       if it match redirect user to the secret page
   */
-  if (username !== mockUser.username || password !== mockUser.password) return res.send("incorrect email / password");
+  if (username !== MOCK_USER.username || password !== MOCK_USER.password)
+    return res.render("login", { error: "incorrect email / password", csrfToken: req.csrfToken() });
 
   // set the id of the user to the cookie
-  req.session.userId = mockUser._id;
+  req.session.userId = MOCK_USER._id;
 
   res.redirect("/secret-content");
 });
 
 // logout
 app.get("/logout", (req, res) => {
-  req.session.destroy();
+  req.session.reset();
   res.redirect("/");
 });
 
@@ -93,9 +95,9 @@ app.get("/secret-content", (req, res) => {
       if user doesnt exist redirect user to the login page 
   */
 
-  if (req.session.userId !== mockUser._id) return res.redirect("/login");
+  if (req.session.userId !== MOCK_USER._id) return res.redirect("/login");
 
-  res.locals.user = mockUser;
+  res.locals.user = MOCK_USER;
   res.render("secret-content");
 });
 
